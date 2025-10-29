@@ -1,0 +1,22 @@
+[package]
+name = "ample_geyser_proxy"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+parking_lot = "0.12.5"
+tracing = { workspace = true }
+tokio = { workspace = true }
+agave-geyser-plugin-interface = { workspace = true }
+solana-clock = { workspace = true }
+solana-signature = { workspace = true }
+solana-pubkey = { workspace = true }
+solana-transaction = { workspace = true }
+solana-logger = { workspace = true }
+transport = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+rustls = { workspace = true }

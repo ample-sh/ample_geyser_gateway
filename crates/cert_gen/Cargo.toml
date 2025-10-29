@@ -1,0 +1,15 @@
+[package]
+name = "cert_gen"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+clap = { workspace = true }
+rcgen = "0.14.5"
+thiserror = "2.0.17"
+time = "0.3.44"
+pem = {workspace = true }
+rustls = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3.8"

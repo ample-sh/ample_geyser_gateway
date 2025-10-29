@@ -1,0 +1,33 @@
+[package]
+name = "transport"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+serde = { workspace = true }
+serde_json = { workspace = true }
+bincode = { workspace = true }
+quinn = { workspace = true }
+tokio = { workspace = true, features = ["full"] }
+tokio-util = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true  }
+num_enum = "0.7.5"
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true }
+opentelemetry-otlp = { workspace = true }
+
+agave-geyser-plugin-interface = { workspace = true }
+solana-pubkey = { workspace = true }
+solana-signature = { workspace = true }
+solana-transaction = { workspace = true }
+solana-hash = { workspace = true, features = ["serde"] }
+solana-transaction-status-client-types = { workspace = true }
+solana-transaction-status = { workspace = true }
+solana-clock = { workspace = true }
+
+rustls = { workspace = true, features = ["ring"] }
+pem = { workspace = true }
+async-compression = { version = "0.4.32", features = ["all", "xz-parallel"] }
+futures = "0.1.31"

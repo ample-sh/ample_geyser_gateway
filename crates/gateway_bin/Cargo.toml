@@ -1,0 +1,18 @@
+[package]
+name = "ample_geyser_gateway"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+agave-geyser-plugin-interface = { workspace = true }
+solana-geyser-plugin-manager = { workspace = true }
+
+transport = { workspace = true }
+anyhow = "1.0.100"
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+clap = { workspace = true }
+rustls = { workspace = true }
+opentelemetry = { workspace = true }
+opentelemetry_sdk = { workspace = true }

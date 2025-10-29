@@ -1,0 +1,26 @@
+{
+  "libpath": "target/release/libample_geyser_proxy.so",
+  "log_level": "info",
+
+  "_comment": "Transport layer QUIC TLS options",
+  "transport_opts": {
+    "cert_path": "./certs/cert.pem",
+    "key_path": "./certs/key.pem",
+    "fqdn": "global-selfhost.ample.sh"
+  },
+
+  "_comment": "Choose compression for the transport layer. LZ4 is marginally faster latency-wise but Zstd has better compression ratios hence less bandwidth usage.",
+  "transport_cfg": {
+    "use_lz4_compression": false,
+    "use_zstd_compression": true
+  },
+
+  "_comment": "The address the Geyser proxy will bind to for incoming gateway connections.",
+  "bind_addr": "0.0.0.0:25565",
+
+  "_comment": "Enable the account coalescer, read more below.",
+  "use_account_coalescer": false,
+
+  "_comment": "The duration in microseconds of each coalescing window. All account updates received for the same pubkey within this window will be coalesced into a single update, useful for reducing bandwidth usage - but higher values induce latency; up to you to balance it out",
+  "account_coalescer_duration_us": 1000
+}

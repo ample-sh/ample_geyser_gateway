@@ -1,0 +1,7 @@
+.idea
+target
+test-ledger
+certs
+
+# Ignore rsync script
+rsync_geyser.sh

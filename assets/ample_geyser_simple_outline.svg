@@ -1,0 +1,50 @@
+<svg width="1000" height="200" viewBox="0 0 1000 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Filter for text outline -->
+    <filter id="outline">
+      <feMorphology operator="dilate" radius="1"/>
+      <feComposite operator="out" in2="SourceGraphic"/>
+      <feColorMatrix values="0 0 0 0 0.2
+                             0 0 0 0 0.2
+                             0 0 0 0 0.2
+                             0 0 0 1 0"/>
+      <feComposite operator="over" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .title { fill: #f1f5f9; }
+      .subtitle { fill: #94a3b8; }
+      .node { fill: #60a5fa; }
+    }
+    @media (prefers-color-scheme: light) {
+      .title { fill: #1e293b; }
+      .subtitle { fill: #64748b; }
+      .node { fill: #3b82f6; }
+    }
+  </style>
+  
+  <!-- Title with monospace font -->
+  <text x="500" y="80" class="title" font-family="'Courier New', monospace" font-size="42" font-weight="600" text-anchor="middle" stroke="rgba(128,128,128,0.3)" stroke-width="0.8" paint-order="stroke">
+    ample_geyser_proxy
+  </text>
+  
+  <!-- Subtitle -->
+  <text x="500" y="120" class="subtitle" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle" opacity="0.9" stroke="rgba(128,128,128,0.2)" stroke-width="0.5" paint-order="stroke">
+    Stream Geyser plugins off-box
+  </text>
+  
+  <!-- Simple node diagram -->
+  <g transform="translate(500, 160)">
+    <circle cx="-80" cy="0" r="5" class="node" opacity="0.6"/>
+    <circle cx="0" cy="0" r="5" class="node" opacity="0.8"/>
+    <circle cx="80" cy="0" r="5" class="node" opacity="0.6"/>
+    
+    <!-- Streaming animation -->
+    <circle r="2" class="node">
+      <animate attributeName="cx" values="-80;0;80" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;0" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+</svg>

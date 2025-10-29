@@ -1,0 +1,48 @@
+[workspace]
+members = [ "crates/cert_gen",
+    "crates/gateway_bin",
+    "crates/geyser_proxy",
+    "crates/transport"
+]
+resolver = "3"
+edition = "2024"
+
+[workspace.dependencies]
+clap = { version = "4.5.51", features = ["derive"] }
+transport = { path = "crates/transport" }
+
+opentelemetry = { version = "0.31.0", features = ["metrics"] }
+opentelemetry_sdk = { version = "0.31.0", features = ["metrics"] }
+opentelemetry-otlp = { version = "0.31.0", features = ["metrics"]}
+
+tokio = { version = "1.48.0", features = ["full"] }
+tokio-util = { version = "0.7.16", features = ["full"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+bincode = "1.3.3"
+thiserror = "2.0.17"
+tracing = { version = "0.1.41", features = ["log"] }
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
+
+
+solana-hash = "3.0.0"
+solana-pubkey = { version = "^3" }
+solana-account = { version = "^3" }
+solana-transaction = { version = "^3" }
+solana-clock = { version = "^3" }
+solana-signature = { version = "^3" }
+solana-logger = { version = "^3" }
+
+# 53d6dd4fdb9a531bdc10e39c920b0fdb33fa99a9
+# make load_plugin public for improved accessibility
+# add serialize + deserialize trait impls for TransactionStatusMeta
+# add serde dependency and implement Serialize + Deserialize for SlotStatus
+agave-geyser-plugin-interface = { git = "https://github.com/ample-sh/agave.git", rev = "53d6dd4fdb9a531bdc10e39c920b0fdb33fa99a9" }
+solana-geyser-plugin-manager = { git = "https://github.com/ample-sh/agave.git", rev = "53d6dd4fdb9a531bdc10e39c920b0fdb33fa99a9" }
+solana-transaction-status-client-types = { git = "https://github.com/ample-sh/agave.git", rev = "53d6dd4fdb9a531bdc10e39c920b0fdb33fa99a9" }
+solana-transaction-status = { git = "https://github.com/ample-sh/agave.git", rev = "53d6dd4fdb9a531bdc10e39c920b0fdb33fa99a9" }
+
+
+quinn = { version = "0.11.9", features = []}
+rustls = { version = "0.23.34", features = ["ring"] }
+pem = "3.0.6"
