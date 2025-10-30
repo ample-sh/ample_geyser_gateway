@@ -26,7 +26,7 @@
   </style>
   
   <!-- Title with monospace font -->
-  <text x="500" y="80" class="title" font-family="'Courier New', monospace" font-size="42" font-weight="600" text-anchor="middle" stroke="rgba(128,128,128,0.3)" stroke-width="0.8" paint-order="stroke">
+  <text x="500" y="80" class="title" font-family="'Courier New', monospace" font-size="42" font-weight="600" text-anchor="middle" stroke="rgba(128,128,128,0.3)" stroke-width="0.5" paint-order="stroke">
     ample_geyser_proxy
   </text>
   

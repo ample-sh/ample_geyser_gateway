@@ -1,3 +1,6 @@
+![alt text](./assets/ample_geyser_simple_outline.svg)
+
+
 # Ample Geyser Proxy + Gateway
 
 Run Geyser plugins off-box: the validator hosts a tiny proxy that streams events over QUIC/TLS, and your gateway picks them up and runs the plugins locally.
@@ -39,12 +42,12 @@ Gotchas for now:
 
 - Rust toolchain (check `rust-toolchain.toml`; stable should work fine)
 - TLS certs in PEM format
-    - Roll your own? Use our cert gen tool below.
-    - Got real certs? Just point the config at 'em.
+    - Self Signed: Use our cert gen tool below.
+    - External (certbot, etc.): Just point the config at them
 
 ## Certs
 
-### Self-Signed (Easy Mode)
+### Self-Signed
 
 Fire up the helper:
 
@@ -55,9 +58,9 @@ cargo run -p cert_gen -- --fqdn localhost --cert certs/cert.pem --key certs/key.
 
 Swap `localhost` for your server's real FQDN—it has to match what the client uses for `--fqdn`. Gets you PEM files, ready to go.
 
-### Real Certs
+### External Certs
 
-If you've got Let's Encrypt or whatever, drop your PEM cert/key files somewhere and reference them in the proxy config.
+If you've got Let's Encrypt or other external service, copy the relative PEM cert/key files somewhere and reference them in the proxy config.
 
 ## Building
 
@@ -67,7 +70,7 @@ If you've got Let's Encrypt or whatever, drop your PEM cert/key files somewhere 
 cargo build -p geyser_proxy --release
 ```
 
-Gives you `target/release/libample_geyser_proxy.so`.
+Gives you the geyser plugin shared library `target/release/libample_geyser_proxy.so`.
 
 ### Gateway Binary (Client)
 
@@ -167,15 +170,7 @@ cargo run -p ample_geyser_gateway -- \
   --metrics-otlp-url http://global-geyser-proxy.otlp.ample.sh:4318/v1/metrics \
   --geyser-plugin-config /path/to/plugin.json
 ```
-
-Some metrics it spits out:
-- transport.channel.account.(messages_total|bytes_total|compressed_bytes_total|packets_dropped_total|buffered_messages)
-- transport.channel.transaction.(...)
-- transport.channel.entry.(...)
-- transport.channel.block.(...)
-- transport.channel.slot.(...)
-- transport.network.bytes_transferred
-- gateway.loaded_plugins (tagged with plugin_name, plugin_path)
+Replace with your own otlp endpoint if needed.
 
 
 ## Troubleshooting
@@ -193,7 +188,7 @@ Some metrics it spits out:
 
 ## Compatibility
 
-Solana versions v3.0.7+ are supported. Earlier versions are not supported.
+Solana versions v3.0.7+ are supported, older versions probably will not work at the moment. (PRs are welcome for this)
 
 ### Bandwidth Usage
 
@@ -214,7 +209,6 @@ The proxy builds on several key technologies (implementation details in `Cargo.t
 - Account snapshot bootstrap (gateway pulls initial state, then goes live)
 - Sharding streams by pubkey/tx for even less HOL blocking
 - Smarter batching with backpressure
-- mTLS or PSK options
 
 If you have an idea / use case, hit up an issue and tell us!
 
