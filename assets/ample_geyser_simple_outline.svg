@@ -32,7 +32,7 @@
   
   <!-- Subtitle -->
   <text x="500" y="120" class="subtitle" font-family="system-ui, sans-serif" font-size="16" text-anchor="middle" opacity="0.9" stroke="rgba(128,128,128,0.2)" stroke-width="0.5" paint-order="stroke">
-    Stream Geyser plugins off-box
+    Stream Geyser plugins remotely
   </text>
   
   <!-- Simple node diagram -->

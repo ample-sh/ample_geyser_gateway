@@ -3,7 +3,7 @@
 
 # Ample Geyser Proxy + Gateway
 
-Run Geyser plugins off-box: the validator hosts a tiny proxy that streams events over QUIC/TLS, and your gateway picks them up and runs the plugins locally.
+Run Geyser plugins remotely: the validator hosts a tiny proxy that streams events over QUIC/TLS, and your gateway picks them up and runs the plugins locally.
 
 For operators: keeps your validator & RPC nodes lean. For devs: iterate geyser plugins on mainnet without the validator hassle.
 
