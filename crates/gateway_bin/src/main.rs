@@ -1,4 +1,5 @@
 mod replicator;
+mod transaction_cache;
 
 use std::mem;
 use clap::Parser;
@@ -36,7 +37,10 @@ struct Args {
 
 
     #[arg(short, long)]
-    geyser_plugin_config: Vec<String>
+    geyser_plugin_config: Vec<String>,
+    
+    #[arg(long, default_value_t = 100_000)]
+    transaction_cache_size: usize
 }
 
 #[tokio::main]
@@ -84,7 +88,7 @@ async fn main() -> anyhow::Result<()> {
     ).await?;
 
     let mut replicator = Replicator::new(replica_receivers);
-
+    let mut transaction_cache = transaction_cache::TransactionCache::new(args.transaction_cache_size);
     let mut manager = GeyserPluginManager::new();
 
     for path in args.geyser_plugin_config {
@@ -98,7 +102,7 @@ async fn main() -> anyhow::Result<()> {
     }
 
     loop {
-        if replicator.replicate(&manager).is_err() {
+        if replicator.replicate(&manager, &mut transaction_cache).is_err() {
             break;
         }
     }

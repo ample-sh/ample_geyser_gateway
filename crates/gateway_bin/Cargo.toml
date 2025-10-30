@@ -6,6 +6,11 @@ edition = "2024"
 [dependencies]
 agave-geyser-plugin-interface = { workspace = true }
 solana-geyser-plugin-manager = { workspace = true }
+solana-pubkey = { workspace = true }
+solana-signature = { workspace = true }
+solana-transaction = { workspace = true }
+solana-message = { workspace = true }
+solana-transaction-error = { workspace = true }
 
 transport = { workspace = true }
 anyhow = "1.0.100"
@@ -16,3 +21,4 @@ clap = { workspace = true }
 rustls = { workspace = true }
 opentelemetry = { workspace = true }
 opentelemetry_sdk = { workspace = true }
+lru = "0.16.2"
