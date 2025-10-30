@@ -27,7 +27,6 @@ tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 
 solana-hash = "3.0.0"
 solana-pubkey = { version = "^3" }
-solana-account = { version = "^3" }
 solana-message = { version = "^3" }
 solana-transaction = { version = "^3" }
 solana-clock = { version = "^3" }

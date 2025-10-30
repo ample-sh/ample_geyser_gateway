@@ -1,4 +1,4 @@
-use std::num::{NonZeroU32, NonZeroUsize};
+use std::num::{NonZeroUsize};
 use std::time::Duration;
 use lru::LruCache;
 use solana_signature::Signature;
@@ -24,7 +24,8 @@ impl TransactionCache {
     }
 
     /// Asynchronously waits for the account info to be available in the cache, up to the specified timeout.
-    pub async fn get_await(&mut self, pubkey: &Signature, timeout: Duration) -> Option<UniformTransactionInfo> {
+    /// TODO: eventually use this instead of take() in the replicator, since some transactions may be delayed - they are on a separate QUIC channel.
+    pub async fn _get_await(&mut self, pubkey: &Signature, timeout: Duration) -> Option<UniformTransactionInfo> {
         if self.lru.contains(&pubkey) {
             self.take(pubkey)
         } else {

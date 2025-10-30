@@ -74,6 +74,7 @@ impl TransportServer {
 
         // transaction channel
         let send = connection.open_uni().await?;
+        let _ = send.set_priority(5);
         tokio::spawn(Self::handle_channel(
             send,
             replica_channels.transaction.clone(),
@@ -107,6 +108,7 @@ impl TransportServer {
 
         // slot status channel
         let send = connection.open_uni().await?;
+        let _ = send.set_priority(4);
         tokio::spawn(Self::handle_channel(
             send,
             replica_channels.slot.clone(),
