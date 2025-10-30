@@ -9,7 +9,6 @@ use rustls::crypto::ring::default_provider;
 use tracing_subscriber;
 use transport::{metrics::TransportMetrics, ReplicaChannels, TransportOpts};
 use opentelemetry::metrics::MeterProvider;
-use rustls::Stream;
 use solana_geyser_plugin_manager::geyser_plugin_manager::GeyserPluginManager;
 use tracing::log;
 use transport::metrics::{init_metrics, StreamMetricHelper};

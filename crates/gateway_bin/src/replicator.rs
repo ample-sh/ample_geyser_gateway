@@ -1,7 +1,7 @@
 use agave_geyser_plugin_interface::geyser_plugin_interface::{ReplicaAccountInfoV3, ReplicaAccountInfoVersions, ReplicaBlockInfoV4, ReplicaBlockInfoVersions, ReplicaEntryInfoV2, ReplicaEntryInfoVersions, ReplicaTransactionInfoV3, ReplicaTransactionInfoVersions};
 use solana_geyser_plugin_manager::geyser_plugin_manager::GeyserPluginManager;
 use tokio::sync::broadcast::error::TryRecvError;
-use transport::{ReplicaChannels, ReplicaReceivers, UniformAccountInfo, UniformBlockInfo, UniformEntryInfo, UniformSlotInfo, UniformTransactionInfo};
+use transport::{ReplicaReceivers, UniformAccountInfo, UniformBlockInfo, UniformEntryInfo, UniformSlotInfo, UniformTransactionInfo};
 
 macro_rules! try_recv_and_handle {
     ($receiver:expr, $replica:ident => $ok_handler:expr) => {
