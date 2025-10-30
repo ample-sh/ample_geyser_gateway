@@ -1,9 +1,9 @@
-![alt text](./assets/ample_geyser_simple_outline.svg)
+![ample geyser proxy banner image](./assets/ample_geyser_simple_outline.svg)
 
 
 # Ample Geyser Proxy + Gateway
 
-Run Geyser plugins remotely: the validator hosts a tiny proxy that streams events over QUIC/TLS, and your gateway picks them up and runs the plugins locally.
+: the validator hosts a tiny proxy that streams events over QUIC/TLS, and your gateway picks them up and runs the plugins locally.
 
 For operators: keeps your validator & RPC nodes lean. For devs: iterate geyser plugins on mainnet without the validator hassle.
 
@@ -155,6 +155,8 @@ RUST_LOG info cargo run -p ample_geyser_gateway -- \
   --fqdn your.proxy.fqdn \
   --geyser-plugin-config /etc/yellowstone/grpc-config.json
 ```
+
+![Yellowstone Log](./assets/yellowstone_log.png)
 
 ## Metrics
 
