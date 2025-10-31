@@ -3,7 +3,7 @@
 
 # Ample Geyser Proxy + Gateway
 
-: the validator hosts a tiny proxy that streams events over QUIC/TLS, and your gateway picks them up and runs the plugins locally.
+The validator hosts a tiny proxy that streams events over QUIC/TLS, and your gateway picks them up and runs the plugins locally.
 
 For operators: keeps your validator & RPC nodes lean. For devs: iterate geyser plugins on mainnet without the validator hassle.
 
@@ -24,23 +24,22 @@ This repo has two main pieces:
 
 The transport bits are in `crates/transport`, shared between both.
 
-## Cool Features & Relevant Info
+## Features & Relevant Info
 
 - QUIC + TLS 1.3 (thanks to quinn and rustls)
 - Cert pinning on the client—you trust exactly the cert you point it at
 - ALPN set to `ample/0.1`
-- Separate streams per event type to dodge head-of-line blocking
+- Separate streams per event type to avoid head-of-line blocking
 - Compression: zstd for bandwidth savings, lz4 for snappier latency
 - Account coalescer on the proxy: merges quick updates for the same pubkey in a tiny window
 - Optional OTLP metrics from the gateway, with per-stream stats
 
 Gotchas for now:
 - No snapshot streaming yet (we skip startup account dumps)
-- Ordering is per-stream only—no global timeline across everything
+- Ordering is per-stream only—no global timeline across everything. This could potentially cause desyncs on bad networks.
 
 ## Prerequisites
 
-- Rust toolchain (check `rust-toolchain.toml`; stable should work fine)
 - TLS certs in PEM format
     - Self Signed: Use our cert gen tool below.
     - External (certbot, etc.): Just point the config at them
