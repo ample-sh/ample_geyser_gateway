@@ -26,17 +26,16 @@ The transport bits are in `crates/transport`, shared between both.
 
 ## Features & Relevant Info
 
-- QUIC + TLS 1.3 (thanks to quinn and rustls)
-- Cert pinning on the client—you trust exactly the cert you point it at
+- QUIC transport layer
 - ALPN set to `ample/0.1`
 - Separate streams per event type to avoid head-of-line blocking
 - Compression: zstd for bandwidth savings, lz4 for snappier latency
 - Account coalescer on the proxy: merges quick updates for the same pubkey in a tiny window
-- Optional OTLP metrics from the gateway, with per-stream stats
+- Optional OTLP metrics export from the gateway
 
-Gotchas for now:
+Current Limitations:
 - No snapshot streaming yet (we skip startup account dumps)
-- Ordering is per-stream only—no global timeline across everything. This could potentially cause desyncs on bad networks.
+- Ordering is per-stream only; no global timeline across everything. This could potentially cause desyncs on bad networks.
 
 ## Prerequisites
 
@@ -55,7 +54,7 @@ Fire up the helper:
 cargo run -p cert_gen -- --fqdn localhost --cert certs/cert.pem --key certs/key.pem
 ```
 
-Swap `localhost` for your server's real FQDN—it has to match what the client uses for `--fqdn`. Gets you PEM files, ready to go.
+Swap `localhost` for your server's real FQDN; it has to match what the client uses for `--fqdn`. Gets you PEM files, ready to go.
 
 ### External Certs
 
@@ -112,7 +111,7 @@ Quick notes:
 - `transport_cfg`: zstd saves bandwidth, lz4 shaves a bit off latency
 - `bind_addr`: where the proxy listens for gateways
 - `use_account_coalescer`: merges rapid updates for the same pubkey in the window if true
-- `account_coalescer_duration_us`: coalescing window—balance bandwidth vs. lag
+- `account_coalescer_duration_us`: coalescing window; balance bandwidth vs. lag
 
 
 ## Install the Proxy in the Validator
@@ -143,8 +142,8 @@ RUST_LOG info cargo run -p ample_geyser_gateway -- \
 Tips:
 - `--upstream-proxy-addr`: IP:port of your validator's proxy
 - Stack `--geyser-plugin-config` for multiple plugins (short: `-g`)
-- `--cert-path` defaults to `certs/cert.pem`; override if your trust root is elsewhere
-- Client pins to the PEM you give it—verifies server cert and FQDN
+- `--cert-path` defaults to `certs/cert.pem` - override if your trust root is elsewhere
+- Client pins to the PEM you give it;verifies server cert and FQDN
 
 Example with Yellowstone gRPC plugin:
 
@@ -185,7 +184,7 @@ Replace with your own otlp endpoint if needed.
 - "MissingKeyPath" server-side?
     - Proxy needs both `cert_path` and `key_path` in `transport_opts`
 - Bandwidth through the roof?
-    - Flip on zstd compression and/or account coalescer. Tweak the window up a smidge, but don't go nuts—latency matters.
+    - Check compression configuration & observe metrics
 
 ## Compatibility
 
@@ -193,7 +192,7 @@ Solana versions v3.0.7+ are supported, older versions probably will not work at 
 
 ### Bandwidth Usage
 
-With `zstd_compression` enabled, Ample Geyser Proxy uses approximately 100-150 Mbit of constant bandwidth—roughly equivalent to 8K video streaming. Most modern Solana validator servers have 10Gbit+ uplinks, making this usage relatively low cost. Further bandwidth optimization is on the roadmap.
+With `zstd_compression` enabled, Ample Geyser Proxy uses approximately 100-150 Mbit of constant bandwidth. Most modern Solana validator servers have 10Gbit+ uplinks, making this usage relatively low cost. Further bandwidth optimization is on the roadmap.
 
 Alternatively, `lz4_compression` uses ~150-200 Mbit with only marginally improved latency.
 
