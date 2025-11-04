@@ -14,6 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install build-essential pkg-config libudev-dev llvm libclang-dev protobuf-compiler -y
+
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
