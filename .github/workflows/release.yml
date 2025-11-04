@@ -73,6 +73,6 @@ jobs:
           generate_release_notes: true
           files: |
             target/release/libample_geyser_proxy.so
-            target/release/ample_geyser_gateway_bin
+            target/release/ample_geyser_gateway
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
