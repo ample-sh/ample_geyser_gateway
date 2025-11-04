@@ -26,4 +26,4 @@ jobs:
           override: true
 
       - name: Build with cargo
-        run: cargo build --all --release
+        run: cargo build --all
