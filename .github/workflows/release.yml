@@ -1,0 +1,62 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name for the release (e.g., v1.2.3)"
+        required: true
+        type: string
+      ref:
+        description: "Branch or commit SHA to build from (default: current branch)"
+        required: false
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ inputs.ref || github.ref_name }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            build-essential \
+            pkg-config \
+            libudev-dev \
+            llvm \
+            libclang-dev \
+            protobuf-compiler
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Build release binary
+        run: cargo build --all --release
+
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ inputs.tag }}
+          git push origin ${{ inputs.tag }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: Release ${{ inputs.tag }}
+          files: |
+            target/release/libample_geyser_proxy.so
+            target/release/ample_geyser_gateway_bin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
