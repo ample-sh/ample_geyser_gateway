@@ -4,8 +4,9 @@
 # Ample Geyser Proxy + Gateway
 
 The validator hosts a tiny proxy that streams events over QUIC/TLS, and your gateway picks them up and runs the plugins locally.
-
 For operators: keeps your validator & RPC nodes lean. For devs: iterate geyser plugins on mainnet without the validator hassle.
+
+### TL;DR It's a geyser plugin that runs a QUIC server where the gateway can connect to - and run geyser plugins itself based on that data source
 
 ## What's in the Box
 
