@@ -7,6 +7,12 @@ members = [ "crates/cert_gen",
 resolver = "3"
 edition = "2024"
 
+[workspace.package]
+version = "0.1.0"
+authors = ["ample.sh", "contact@ample.sh"]
+license = "MIT"
+edition = "2024"
+
 [workspace.dependencies]
 clap = { version = "4.5.51", features = ["derive"] }
 transport = { path = "crates/transport" }
