@@ -3,5 +3,5 @@ target
 test-ledger
 certs
 
-# Ignore rsync script
+# Ignore development rsync script
 rsync_geyser.sh

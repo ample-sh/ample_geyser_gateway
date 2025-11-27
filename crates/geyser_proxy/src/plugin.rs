@@ -67,7 +67,7 @@ impl agave_geyser_plugin_interface::geyser_plugin_interface::GeyserPlugin for Am
         let account_coalescer_duration_us = config.account_coalescer_duration_us;
 
         let channels = runtime.block_on(async move {
-            let channels = ReplicaChannels::new(u16::MAX as usize * 10, u16::MAX as usize, 4000, 1024, 1024);
+            let channels = ReplicaChannels::with_defaults();
 
             let transport_server = TransportServer::bind(
                 config.bind_addr,

@@ -18,6 +18,15 @@ pub type TransportResult<T> = Result<T, error::TransportError>;
 
 pub const ALPN_QUIC_AMPLE: &[&[u8]] = &[b"ample/0.1"];
 
+/// Default buffer sizes for replica channels
+pub mod buffer_defaults {
+    pub const ACCOUNT: usize = 6_553_500;
+    pub const TRANSACTION: usize = 65_535;
+    pub const ENTRY: usize = 4000;
+    pub const BLOCK: usize = 1024;
+    pub const SLOT: usize = 1024;
+}
+
 #[derive(Debug, IntoPrimitive, TryFromPrimitive, Copy, Clone)]
 #[repr(u8)]
 pub enum StreamOp {
@@ -72,6 +81,16 @@ impl ReplicaChannels {
             entry_buffer_size,
             block_buffer_size,
             slot_buffer_size,
+        )
+    }
+
+    pub fn with_defaults() -> Self {
+        Self::new(
+            buffer_defaults::ACCOUNT,
+            buffer_defaults::TRANSACTION,
+            buffer_defaults::ENTRY,
+            buffer_defaults::BLOCK,
+            buffer_defaults::SLOT,
         )
     }
 }

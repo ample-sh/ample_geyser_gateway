@@ -1,11 +1,11 @@
 mod replicator;
 mod transaction_cache;
 
-use std::mem;
 use clap::Parser;
 use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use rustls::crypto::ring::default_provider;
 use tracing_subscriber;
 use transport::{metrics::TransportMetrics, ReplicaChannels, TransportOpts};
@@ -62,19 +62,12 @@ async fn main() -> anyhow::Result<()> {
     let metrics = if let Some(metrics_otlp_url) = &args.metrics_otlp_url {
         let meter_provider = init_metrics(metrics_otlp_url);
         let meter = meter_provider.meter("transport-gateway");
-        mem::forget(meter_provider); // todo ugly hack, prevents meter provider from being dropped in the beginning
         Some(Arc::new(TransportMetrics::new(&meter)))
     } else {
         None
     };
 
-    let replica_channels = ReplicaChannels::new(
-        u16::MAX as usize * 10,
-        u16::MAX as usize,
-        4000,
-        1024,
-        1024,
-    );
+    let replica_channels = ReplicaChannels::with_defaults();
 
     let replica_receivers = transport::client::TransportClient::connect(
         args.upstream_proxy_addr,
@@ -87,8 +80,8 @@ async fn main() -> anyhow::Result<()> {
         metrics.clone(),
     ).await?;
 
-    let mut replicator = Replicator::new(replica_receivers);
-    let mut transaction_cache = transaction_cache::TransactionCache::new(args.transaction_cache_size);
+    let replicator = Replicator::new(replica_receivers);
+    let transaction_cache = transaction_cache::TransactionCache::new(args.transaction_cache_size);
     let mut manager = GeyserPluginManager::new();
 
     for path in args.geyser_plugin_config {
@@ -101,11 +94,28 @@ async fn main() -> anyhow::Result<()> {
         )
     }
 
-    loop {
-        if replicator.replicate(&manager, &mut transaction_cache).is_err() {
-            break;
+    let shutdown = Arc::new(AtomicBool::new(false));
+    let shutdown_clone = shutdown.clone();
+
+    let replicator_handle = tokio::task::spawn_blocking(move || {
+        replicator.run(manager, transaction_cache, shutdown_clone);
+    });
+
+    tokio::select! {
+        _ = tokio::signal::ctrl_c() => {
+            tracing::info!("received Ctrl+C, initiating shutdown");
+        }
+        result = replicator_handle => {
+            match result {
+                Ok(()) => tracing::info!("replicator finished"),
+                Err(e) => tracing::error!("replicator task panicked: {}", e),
+            }
+            return Ok(());
         }
     }
+
+    shutdown.store(true, Ordering::Relaxed);
+    tracing::info!("shutdown signal sent, waiting for replicator to finish");
 
     Ok(())
 }
