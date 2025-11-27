@@ -9,6 +9,8 @@ use solana_message::AddressLoader;
 use solana_message::v0::{LoadedAddresses, MessageAddressTableLookup};
 use solana_transaction::sanitized::SanitizedTransaction;
 use std::collections::HashSet;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use tokio::sync::broadcast::error::TryRecvError;
 use transport::{
     ReplicaReceivers, UniformAccountInfo, UniformBlockInfo, UniformEntryInfo, UniformSlotInfo,
@@ -16,11 +18,16 @@ use transport::{
 };
 
 macro_rules! try_recv_and_handle {
-    ($receiver:expr, $replica:ident => $ok_handler:expr) => {
+    ($receiver:expr, $channel_name:literal, $replica:ident => $ok_handler:expr) => {
         match $receiver.try_recv() {
             Ok($replica) => $ok_handler,
-            Err(TryRecvError::Closed) => {}
-            Err(_) => {}
+            Err(TryRecvError::Empty) => {}
+            Err(TryRecvError::Lagged(n)) => {
+                tracing::warn!(channel = $channel_name, skipped = n, "receiver lagged, messages dropped");
+            }
+            Err(TryRecvError::Closed) => {
+                tracing::error!(channel = $channel_name, "channel closed unexpectedly");
+            }
         }
     };
 }
@@ -191,17 +198,27 @@ impl Replicator {
         }
     }
 
-    pub fn replicate(
+    pub fn run(
+        mut self,
+        manager: GeyserPluginManager,
+        mut transaction_cache: TransactionCache,
+        shutdown: Arc<AtomicBool>,
+    ) {
+        while !shutdown.load(Ordering::Relaxed) {
+            self.replicate(&manager, &mut transaction_cache);
+        }
+        tracing::info!("replicator received shutdown signal, stopping");
+    }
+
+    fn replicate(
         &mut self,
         manager: &GeyserPluginManager,
-        mut transaction_cache: &mut TransactionCache,
-    ) -> Result<(), ()> {
-        try_recv_and_handle!(self.replica_receivers.transaction, transaction_replica => self.notify_transaction_replica(manager, transaction_replica, &mut transaction_cache));
-        try_recv_and_handle!(self.replica_receivers.account, account_replica => self.notify_account_replica(manager, account_replica, &mut transaction_cache));
-        try_recv_and_handle!(self.replica_receivers.block, block_replica => self.notify_block_replica(manager, block_replica));
-        try_recv_and_handle!(self.replica_receivers.entry, entry_replica => self.notify_entry_replica(manager, entry_replica));
-        try_recv_and_handle!(self.replica_receivers.slot, slot_replica => self.notify_slot_replica(manager, slot_replica));
-
-        Ok(())
+        transaction_cache: &mut TransactionCache,
+    ) {
+        try_recv_and_handle!(self.replica_receivers.transaction, "transaction", transaction_replica => self.notify_transaction_replica(manager, transaction_replica, transaction_cache));
+        try_recv_and_handle!(self.replica_receivers.account, "account", account_replica => self.notify_account_replica(manager, account_replica, transaction_cache));
+        try_recv_and_handle!(self.replica_receivers.block, "block", block_replica => self.notify_block_replica(manager, block_replica));
+        try_recv_and_handle!(self.replica_receivers.entry, "entry", entry_replica => self.notify_entry_replica(manager, entry_replica));
+        try_recv_and_handle!(self.replica_receivers.slot, "slot", slot_replica => self.notify_slot_replica(manager, slot_replica));
     }
 }

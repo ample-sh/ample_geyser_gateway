@@ -6,7 +6,7 @@ use transport::{UniformTransactionInfo};
 
 pub struct TransactionCache {
     lru: LruCache<Signature, UniformTransactionInfo>,
-    added_pubkey_bd: tokio::sync::broadcast::Sender<Signature>,
+    signature_added_tx: tokio::sync::broadcast::Sender<Signature>,
 }
 
 impl TransactionCache {
@@ -14,7 +14,7 @@ impl TransactionCache {
         let (sender, _) = tokio::sync::broadcast::channel(1024);
         Self {
             lru: LruCache::new(NonZeroUsize::try_from(capacity).unwrap()),
-            added_pubkey_bd: sender,
+            signature_added_tx: sender,
         }
     }
 
@@ -23,13 +23,13 @@ impl TransactionCache {
         self.lru.pop(pubkey)
     }
 
-    /// Asynchronously waits for the account info to be available in the cache, up to the specified timeout.
+    /// Asynchronously waits for the transaction info to be available in the cache, up to the specified timeout.
     /// TODO: eventually use this instead of take() in the replicator, since some transactions may be delayed - they are on a separate QUIC channel.
-    pub async fn _get_await(&mut self, pubkey: &Signature, timeout: Duration) -> Option<UniformTransactionInfo> {
-        if self.lru.contains(&pubkey) {
-            self.take(pubkey)
+    pub async fn _get_await(&mut self, signature: &Signature, timeout: Duration) -> Option<UniformTransactionInfo> {
+        if self.lru.contains(&signature) {
+            self.take(signature)
         } else {
-            let mut recv = self.added_pubkey_bd.subscribe();
+            let mut recv = self.signature_added_tx.subscribe();
             let deadline = tokio::time::Instant::now() + timeout;
             loop {
                 let recv_fut = recv.recv();
@@ -40,9 +40,9 @@ impl TransactionCache {
                     }
                     result = recv_fut => {
                         match result {
-                            Ok(added_pubkey) => {
-                                if &added_pubkey == pubkey {
-                                    return self.take(pubkey);
+                            Ok(added_signature) => {
+                                if &added_signature == signature {
+                                    return self.take(signature);
                                 }
                             }
                             Err(tokio::sync::broadcast::error::RecvError::Lagged(_)) => {
@@ -59,7 +59,7 @@ impl TransactionCache {
     }
 
     pub fn insert(&mut self, transaction_info: UniformTransactionInfo) {
-        let _ = self.added_pubkey_bd.send(transaction_info.signature);
+        let _ = self.signature_added_tx.send(transaction_info.signature);
         self.lru.put(transaction_info.signature, transaction_info);
     }
 }

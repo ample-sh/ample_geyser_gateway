@@ -171,6 +171,25 @@ impl TransportMetrics {
     }
 }
 
+macro_rules! dispatch_stream_metric {
+    ($metrics:expr, $stream_op:expr, counter $method:ident($value:expr) => {
+        account: $acc:ident,
+        transaction: $tx:ident,
+        entry: $entry:ident,
+        block: $block:ident,
+        slot: $slot:ident
+    }) => {
+        match $stream_op {
+            crate::StreamOp::Account => $metrics.$acc.$method($value, &[]),
+            crate::StreamOp::Transaction => $metrics.$tx.$method($value, &[]),
+            crate::StreamOp::Entry => $metrics.$entry.$method($value, &[]),
+            crate::StreamOp::Block => $metrics.$block.$method($value, &[]),
+            crate::StreamOp::SlotStatus => $metrics.$slot.$method($value, &[]),
+            _ => {}
+        }
+    };
+}
+
 pub struct StreamMetricHelper;
 
 impl StreamMetricHelper {
@@ -179,30 +198,21 @@ impl StreamMetricHelper {
         stream_op: crate::StreamOp,
         bytes_count: u64,
     ) {
-        if let Some(metrics) = metrics {
-            match stream_op {
-                crate::StreamOp::Account => {
-                    metrics.account_total_messages.add(1, &[]);
-                    metrics.account_total_bytes.add(bytes_count, &[]);
-                }
-                crate::StreamOp::Transaction => {
-                    metrics.transaction_total_messages.add(1, &[]);
-                    metrics.transaction_total_bytes.add(bytes_count, &[]);
-                }
-                crate::StreamOp::Entry => {
-                    metrics.entry_total_messages.add(1, &[]);
-                    metrics.entry_total_bytes.add(bytes_count, &[]);
-                }
-                crate::StreamOp::Block => {
-                    metrics.block_total_messages.add(1, &[]);
-                    metrics.block_total_bytes.add(bytes_count, &[]);
-                }
-                crate::StreamOp::SlotStatus => {
-                    metrics.slot_total_messages.add(1, &[]);
-                    metrics.slot_total_bytes.add(bytes_count, &[]);
-                }
-                _ => {}
-            }
+        if let Some(m) = metrics {
+            dispatch_stream_metric!(m, stream_op, counter add(1) => {
+                account: account_total_messages,
+                transaction: transaction_total_messages,
+                entry: entry_total_messages,
+                block: block_total_messages,
+                slot: slot_total_messages
+            });
+            dispatch_stream_metric!(m, stream_op, counter add(bytes_count) => {
+                account: account_total_bytes,
+                transaction: transaction_total_bytes,
+                entry: entry_total_bytes,
+                block: block_total_bytes,
+                slot: slot_total_bytes
+            });
         }
     }
 
@@ -211,25 +221,14 @@ impl StreamMetricHelper {
         stream_op: crate::StreamOp,
         count: u64,
     ) {
-        if let Some(metrics) = metrics {
-            match stream_op {
-                crate::StreamOp::Account => {
-                    metrics.account_packets_dropped.add(count, &[]);
-                }
-                crate::StreamOp::Transaction => {
-                    metrics.transaction_packets_dropped.add(count, &[]);
-                }
-                crate::StreamOp::Entry => {
-                    metrics.entry_packets_dropped.add(count, &[]);
-                }
-                crate::StreamOp::Block => {
-                    metrics.block_packets_dropped.add(count, &[]);
-                }
-                crate::StreamOp::SlotStatus => {
-                    metrics.slot_packets_dropped.add(count, &[]);
-                }
-                _ => {}
-            }
+        if let Some(m) = metrics {
+            dispatch_stream_metric!(m, stream_op, counter add(count) => {
+                account: account_packets_dropped,
+                transaction: transaction_packets_dropped,
+                entry: entry_packets_dropped,
+                block: block_packets_dropped,
+                slot: slot_packets_dropped
+            });
         }
     }
 
@@ -238,25 +237,14 @@ impl StreamMetricHelper {
         stream_op: crate::StreamOp,
         size: u64,
     ) {
-        if let Some(metrics) = metrics {
-            match stream_op {
-                crate::StreamOp::Account => {
-                    metrics.account_buffered_messages.record(size, &[]);
-                }
-                crate::StreamOp::Transaction => {
-                    metrics.transaction_buffered_messages.record(size, &[]);
-                }
-                crate::StreamOp::Entry => {
-                    metrics.entry_buffered_messages.record(size, &[]);
-                }
-                crate::StreamOp::Block => {
-                    metrics.block_buffered_messages.record(size, &[]);
-                }
-                crate::StreamOp::SlotStatus => {
-                    metrics.slot_buffered_messages.record(size, &[]);
-                }
-                _ => {}
-            }
+        if let Some(m) = metrics {
+            dispatch_stream_metric!(m, stream_op, counter record(size) => {
+                account: account_buffered_messages,
+                transaction: transaction_buffered_messages,
+                entry: entry_buffered_messages,
+                block: block_buffered_messages,
+                slot: slot_buffered_messages
+            });
         }
     }
 
@@ -265,25 +253,14 @@ impl StreamMetricHelper {
         stream_op: crate::StreamOp,
         bytes_count: u64,
     ) {
-        if let Some(metrics) = metrics {
-            match stream_op {
-                crate::StreamOp::Account => {
-                    metrics.account_compressed_bytes.add(bytes_count, &[]);
-                }
-                crate::StreamOp::Transaction => {
-                    metrics.transaction_compressed_bytes.add(bytes_count, &[]);
-                }
-                crate::StreamOp::Entry => {
-                    metrics.entry_compressed_bytes.add(bytes_count, &[]);
-                }
-                crate::StreamOp::Block => {
-                    metrics.block_compressed_bytes.add(bytes_count, &[]);
-                }
-                crate::StreamOp::SlotStatus => {
-                    metrics.slot_compressed_bytes.add(bytes_count, &[]);
-                }
-                _ => {}
-            }
+        if let Some(m) = metrics {
+            dispatch_stream_metric!(m, stream_op, counter add(bytes_count) => {
+                account: account_compressed_bytes,
+                transaction: transaction_compressed_bytes,
+                entry: entry_compressed_bytes,
+                block: block_compressed_bytes,
+                slot: slot_compressed_bytes
+            });
         }
     }
 
