@@ -9,7 +9,7 @@ resolver = "3"
 edition = "2024"
 
 [workspace.package]
-version = "0.1.0"
+version = "0.1.1"
 authors = ["ample.sh", "contact@ample.sh"]
 license = "MIT"
 edition = "2024"
