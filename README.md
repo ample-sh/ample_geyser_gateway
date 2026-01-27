@@ -24,6 +24,7 @@ flowchart LR
 - **Validator isolation** — Plugin crashes and resource usage don't affect your validator
 - **Multi-tenant** — Serve multiple clients with different plugins/versions from one gateway
 - **Mainnet plugin dev** — Iterate on geyser plugins against live data without running a full validator
+- **Performance** — While other projects similar to this one exist, the sole focus of ample_geyser_gateway is ultimately performance & latency. Preliminary tests measure sub-millisecond latency across all types of replica notifications.
 
 ## Quick Start
 
