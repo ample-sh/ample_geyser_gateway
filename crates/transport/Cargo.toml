@@ -16,7 +16,7 @@ thiserror = { workspace = true  }
 num_enum = "0.7.5"
 opentelemetry = { workspace = true }
 opentelemetry_sdk = { workspace = true }
-opentelemetry-otlp = { workspace = true }
+opentelemetry-otlp = { workspace = true, features = ["grpc-tonic"] }
 
 agave-geyser-plugin-interface = { workspace = true }
 solana-pubkey = { workspace = true }

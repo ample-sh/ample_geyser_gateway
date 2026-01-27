@@ -1,6 +1,6 @@
 use opentelemetry::KeyValue;
 use opentelemetry::metrics::{Counter, Gauge, Meter};
-use opentelemetry_otlp::{Protocol, WithExportConfig};
+use opentelemetry_otlp::{WithExportConfig};
 use std::sync::Arc;
 
 pub struct TransportMetrics {
@@ -295,8 +295,7 @@ pub fn init_metrics(otlp_endpoint: &str) -> opentelemetry_sdk::metrics::SdkMeter
     use opentelemetry_otlp::MetricExporter;
 
     let exporter = MetricExporter::builder()
-        .with_http()
-        .with_protocol(Protocol::HttpBinary)
+        .with_tonic()
         .with_endpoint(otlp_endpoint)
         .build()
         .unwrap();
