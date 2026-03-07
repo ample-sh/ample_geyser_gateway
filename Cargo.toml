@@ -6,7 +6,6 @@ members = [
     "crates/transport"
 ]
 resolver = "3"
-edition = "2024"
 
 [workspace.package]
 version = "0.1.1"
@@ -32,24 +31,24 @@ tracing = { version = "0.1.41", features = ["log"] }
 tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 
 
-solana-hash = "^3"
-solana-pubkey = { version = "^3" }
-solana-message = { version = "^3" }
-solana-transaction = { version = "^3" }
-solana-clock = { version = "^3" }
-solana-signature = { version = "^3" }
-solana-logger = { version = "^3" }
-solana-transaction-error = { version = "^3" }
-
 # d93a485a7d0523018a418f00417f1b42695d696d
 # make load_plugin public for improved accessibility
 # add serialize + deserialize trait impls for TransactionStatusMeta
 # add serde dependency and implement Serialize + Deserialize for SlotStatus
 # changing these dependencies below determines all solana core dependency versions thanks to the cargo resolver
-agave-geyser-plugin-interface = { git = "https://github.com/ample-sh/agave.git", branch = "v3.0.11+ample_patch" }
-solana-geyser-plugin-manager = { git = "https://github.com/ample-sh/agave.git", branch = "v3.0.11+ample_patch" }
-solana-transaction-status-client-types = { git = "https://github.com/ample-sh/agave.git", branch = "v3.0.11+ample_patch" }
-solana-transaction-status = { git = "https://github.com/ample-sh/agave.git", branch = "v3.0.11+ample_patch" }
+agave-geyser-plugin-interface = { git = "https://github.com/ample-sh/agave.git", branch = "v3.1.9+ample_patch" }
+solana-geyser-plugin-manager = { git = "https://github.com/ample-sh/agave.git", branch = "v3.1.9+ample_patch" }
+solana-transaction-status-client-types = { git = "https://github.com/ample-sh/agave.git", branch = "v3.1.9+ample_patch" }
+solana-transaction-status = { git = "https://github.com/ample-sh/agave.git", branch = "v3.1.9+ample_patch" }
+
+solana-hash = "3.1.0"
+solana-pubkey = { version = "3.0.0", default-features = false }
+solana-message = "3.0.1"
+solana-transaction = "3.0.2"
+solana-clock = "3.0.0"
+solana-signature = { version = "3.1.0", default-features = false }
+solana-logger = "3.0.0"
+solana-transaction-error = "3.0.0"
 
 
 quinn = { version = "0.11.9", features = []}

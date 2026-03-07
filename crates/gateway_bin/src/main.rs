@@ -59,12 +59,13 @@ async fn main() -> anyhow::Result<()> {
     );
 
     // Initialize OpenTelemetry metrics
-    let metrics = if let Some(metrics_otlp_url) = &args.metrics_otlp_url {
+    // Keep _meter_provider alive for the lifetime of the application
+    let (_meter_provider, metrics) = if let Some(metrics_otlp_url) = &args.metrics_otlp_url {
         let meter_provider = init_metrics(metrics_otlp_url);
         let meter = meter_provider.meter("transport-gateway");
-        Some(Arc::new(TransportMetrics::new(&meter)))
+        (Some(meter_provider), Some(Arc::new(TransportMetrics::new(&meter))))
     } else {
-        None
+        (None, None)
     };
 
     let replica_channels = ReplicaChannels::with_defaults();
@@ -82,7 +83,7 @@ async fn main() -> anyhow::Result<()> {
 
     let replicator = Replicator::new(replica_receivers);
     let transaction_cache = transaction_cache::TransactionCache::new(args.transaction_cache_size);
-    let mut manager = GeyserPluginManager::new();
+    let mut manager = GeyserPluginManager::default();
 
     for path in args.geyser_plugin_config {
         log::info!("loading geyser plugin: {}", path);
