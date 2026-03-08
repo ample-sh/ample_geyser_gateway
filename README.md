@@ -79,7 +79,7 @@ ample_geyser_gateway \
 | OTLP Metrics | `--metrics-otlp-url` for observability |
 
 ## Compatibility
-v3.0.7-v3.0.11
+Check the Releases tab for latest versions & ubuntu-based builds
 
 ## License
 
